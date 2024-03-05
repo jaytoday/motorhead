@@ -1,6 +1,7 @@
 <h1 align="center" >
-Motörhead
+🧠 Motorhead (DEPRECATED)
 </h1>
+<h2>Support is no longer maintained for this project.</h2>
 <p align="center">
     <a href="https://github.com/getmetal/motorhead/blob/main/LICENSE">
     <img src="https://img.shields.io/github/license/getmetal/motorhead?style=flat&label=license&logo=github&color=4f46e5&logoColor=fff" alt="License" />
@@ -13,13 +14,13 @@ Motörhead
   </a>
 </p>
 
-Motörhead is a memory and information retrieval server for LLMs.
+Motorhead is a memory and information retrieval server for LLMs.
 
 [![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/bmO_uf?referralCode=5NirXf)
 
-## Why use Motörhead?
+## Why use Motorhead?
 
-When building chat applications using LLMs, memory handling is something that  has to be built every time. Motörhead is a server to assist with that process. It provides 3 simple APIs:
+When building chat applications using LLMs, memory handling is something that  has to be built every time. Motorhead is a server to assist with that process. It provides 3 simple APIs:
 
 - GET `/sessions/:id/memory` returns messages up to `MAX_WINDOW_SIZE`.
 ```json
@@ -59,7 +60,7 @@ When building chat applications using LLMs, memory handling is something that  h
 }
 ```
 
-- POST `/sessions/:id/memory` - you can send multiple messages to Motorhead to store.
+- POST `/sessions/:id/memory` - Send an array of messages to Motorhead to store.
 
 ```bash
 curl --location 'localhost:8080/sessions/${SESSION_ID}/memory' \
@@ -69,11 +70,13 @@ curl --location 'localhost:8080/sessions/${SESSION_ID}/memory' \
 }'
 ```
 
+Either an existing or new `SESSION_ID` can be used when storing messages, and the session is automatically created if it did not previously exist.
+
 Optionally, `context` can be send in if it needs to get loaded from another datastore.
 
 - DELETE `/sessions/:id/memory` - deletes the session's message list.
 
-A max `window_size` is set for the LLM to keep track of the conversation. Once that max is hit, Motörhead will process (`window_size  / 2` messages) and summarize them. Subsequent summaries, as the messages grow, are incremental.
+A max `window_size` is set for the LLM to keep track of the conversation. Once that max is hit, Motorhead will process (`window_size  / 2` messages) and summarize them. Subsequent summaries, as the messages grow, are incremental.
 
 - POST `/sessions/:id/retrieval` - searches by text query using VSS.
 
@@ -92,9 +95,20 @@ Searches are segmented (filtered) by the session id provided automatically.
 
 - `MOTORHEAD_MAX_WINDOW_SIZE` (default:12) - Number of max messages returned by the server. When this number is reached, a job is triggered to halve it.
 - `MOTORHEAD_LONG_TERM_MEMORY` (default:false) - Enables long term memory using Redisearch VSS.
-- `MOTORHEAD_PORT` (default:8000) - Motörhead Server Port
-- `OPENAI_API_KEY` (required)- [Your api key](https://platform.openai.com/account/api-keys) to connect to OpenAI.
+- `MOTORHEAD_MODEL` (default:gpt-3.5-turbo) - Model used to run the incremental summarization. Use `gpt-3.5-turbo` or `gpt-4` - otherwise some weird things might happen.
+- `PORT` (default:8000) - Motorhead Server Port
+- `OPENAI_API_KEY`- [Your api key](https://platform.openai.com/account/api-keys) to connect to OpenAI.
 - `REDIS_URL` (required)- URL used to connect to `redis`.
+- `OPENAI_API_BASE` (default:https://api.openai.com/v1) - OpenAI API Base URL
+
+### Azure deployment
+
+Additional Environment Variables are required for Azure deployments:
+
+- `AZURE_DEPLOYMENT_ID`
+- `AZURE_DEPLOYMENT_ID_ADA`
+- `AZURE_API_BASE`
+- `AZURE_API_KEY`
 
 ## How to run
 
@@ -105,9 +119,12 @@ docker-compose build && docker-compose up
 
 Or you can use the image `docker pull ghcr.io/getmetal/motorhead:latest` directly:
 ```bash
-docker run --name motorhead -p 8080:8080 -e MOTORHEAD_PORT=8080 -e REDIS_URL='redis://redis:6379' -d ghcr.io/getmetal/motorhead:latest
+docker run --name motorhead -p 8080:8080 -e PORT=8080 -e REDIS_URL='redis://redis:6379' -d ghcr.io/getmetal/motorhead:latest
 ```
 
 ## Examples
 
-- Check out our [Chat JS Example](examples/chat-js/)
+- [Chat JS Example](examples/chat-js/)
+- [Chat JS Vanilla Example](examples/chat-vanilla-js/)
+- [Chat JS Vanilla Hosted Example](examples/chat-vanilla-js-hosted/)
+- [Chat Python Example](examples/chat-py/)

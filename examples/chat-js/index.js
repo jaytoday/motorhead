@@ -12,7 +12,6 @@ import {
   SystemMessagePromptTemplate,
   MessagesPlaceholder,
 } from "langchain/prompts";
-// import MotorheadMemory from "./motorheadMemory.js";
 import { MotorheadMemory } from "langchain/memory";
 
 const rl = readline.createInterface({
@@ -34,10 +33,10 @@ export const run = async () => {
   const memory = new MotorheadMemory({
     returnMessages: true,
     memoryKey: "history",
-    sessionId: "ozzy666",
+    sessionId: "ozzy6666",
     motorheadURL: "http://localhost:8080"
   });
-  await memory.init(); // loads previous state from Motörhead 🤘
+  await memory.init(); // loads previous state from Motorhead 🤘
   let context = "";
 
   if (memory.context) {
@@ -47,7 +46,7 @@ export const run = async () => {
 
   const chatPrompt = ChatPromptTemplate.fromPromptMessages([
     SystemMessagePromptTemplate.fromTemplate(
-      `The following is a friendly conversation between a human and an AI. The AI is talkative and provides lots of specific details from its context. If the AI does not know the answer to a question, it truthfully says it does not know.$${context}`
+      `The following is a friendly conversation between a human and an AI. The AI is talkative and provides lots of specific details from its context. If the AI does not know the answer to a question, it truthfully says it does not know.${context}`
     ),
     new MessagesPlaceholder("history"),
     HumanMessagePromptTemplate.fromTemplate("{input}"),
@@ -60,15 +59,15 @@ export const run = async () => {
   });
 
   const postToBash = async () => {
-    console.log("\n");
-    rl.question(chalk.green(``), async function(answer) {
+    console.log('\n')
+    rl.question(chalk.green(`\n`), async function(answer) {
       const res = await chain.call({ input: answer });
       await postToBash(res.response);
     });
   };
 
   rl.question(
-    chalk.blue(`\nMotörhead 🤘chat start\n`),
+    chalk.blue(`\nMotorhead 🤘chat start\n`),
     async function(answer) {
       const res = await chain.call({ input: answer });
       await postToBash(res.response);

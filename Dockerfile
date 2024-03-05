@@ -1,4 +1,9 @@
-FROM rust:1.68-slim-buster as build
+FROM rust:1.68-bullseye as build
+
+# had to add this for open-ssl
+RUN apt-get update -y && \
+  apt-get install -y pkg-config make g++ libssl-dev ca-certificates && \
+  rustup target add x86_64-unknown-linux-gnu
 
 RUN USER=root cargo new --bin motorhead
 WORKDIR /motorhead
@@ -6,12 +11,8 @@ WORKDIR /motorhead
 COPY ./Cargo.lock ./Cargo.lock
 COPY ./Cargo.toml ./Cargo.toml
 
-# had to add this for open-ssl
-RUN apt-get update -y && \
-  apt-get install -y pkg-config make g++ libssl-dev ca-certificates && \
-  rustup target add x86_64-unknown-linux-gnu
-
 # cache dependencies
+ENV CARGO_NET_GIT_FETCH_WITH_CLI=true
 RUN cargo build --release
 RUN rm src/*.rs
 
@@ -22,7 +23,7 @@ COPY ./src ./src
 RUN rm ./target/release/deps/motorhead*
 RUN cargo build --release
 
-FROM debian:buster-slim
+FROM debian:bullseye
 
 RUN apt-get update && apt install -y openssl ca-certificates
 
